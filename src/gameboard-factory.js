@@ -19,13 +19,13 @@ export function createGameBoard() {
     }
 
     // Test for a ship placed out of bounds. Function returns null if out of bounds.
-    function outOfBounds(axis, x, y) {
+    function outOfBounds(length, axis, x, y) {
         if(axis === 'x') {
-            let outOfBounds = x + length;
+            let outOfBounds = parseInt(x) + length;
             if(outOfBounds > 9)
                 return null;
         } else if(axis === 'y') {
-            let outOfBounds = y + length;
+            let outOfBounds = parseInt(y) + length;
             if(outOfBounds > 9)
                 return null;
         }
@@ -35,22 +35,23 @@ export function createGameBoard() {
     // "axis" is the axis the ship will be placed.
     // "x" and "y" are the starting x and y coordinates the ship will be placed.
     function placeShip(length, axis, x, y) {
-        
         // Test out of bounds.
-        if(outOfBounds(axis, x, y) === null) {
+        if(outOfBounds(length, axis, x, y) === null) {
+            console.log('Out of bounds.');
             return ships; // return ships without creating anything
         }
 
         let shipPosition = [];
         for(let i = 0; i < length; i++) {
             if(axis === 'x') {
-                let xIncrement = x + i;
+                let xIncrement = parseInt(x) + i;
+                // Test if space is occupied.
                 if(isOccupiedSpace(xIncrement, y)) {
                     return ships;
                 }
                 shipPosition[i] = `${xIncrement}${y}`;
             } else if(axis === 'y') {
-                let yIncrement = y + i;
+                let yIncrement = parseInt(y) + i;
                 if(isOccupiedSpace(x, yIncrement)) {
                     return ships;
                 }
@@ -94,6 +95,8 @@ export function createGameBoard() {
 
     return {
         board,
+        ships,
+        occupiedSpaces,
         placeShip,
         receiveAttack,
     };

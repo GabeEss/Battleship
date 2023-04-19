@@ -1,0 +1,28 @@
+.cell {
+    height: 50px;
+    width: 50px;
+    background-color: blue;
+}
+
+.number-cell {
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.letter-cell {
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+board-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.player-ship {
+    background-color: gold;
+}

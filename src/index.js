@@ -1,11 +1,8 @@
 import './style.css';
-import { createGameBoard } from './gameboard-factory';
+import gameState from './gamestate';
 
-const playerBoard = createGameBoard();
+const body = document.querySelector('body');
+const content = document.createElement('content');
+body.appendChild(content);
 
-let ships = playerBoard.placeShip(2, "x", 1, 4);
-ships = playerBoard.placeShip(2, "x", 0, 0);
-console.log(ships);
-playerBoard.receiveAttack(1, 4);
-
-console.log(playerBoard);
+gameState(content);
