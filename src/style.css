@@ -2,12 +2,16 @@
     height: 50px;
     width: 50px;
     background-color: blue;
+    text-align: center;
+    line-height: 50px;
 }
 
 .enemy-cell {
     height: 50px;
     width: 50px;
     background-color: red;
+    text-align: center;
+    line-height: 50px;
 }
 
 .number-cell {
@@ -37,6 +41,10 @@ board-container {
     background-color: white;
 }
 
-.hit {
+.hit::before {
+    content: "X";
+  }
+
+.sunk {
     background-color: black;
 }

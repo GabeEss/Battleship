@@ -2,13 +2,16 @@ import { displayBoard, displayEnemyBoard } from "./display-board";
 import gameOverCheck from "./game-over-check";
 import { playerMainPhase, aiMainPhase } from "./main-phase";
 import { aiPlacePhase, placePhase } from "./place-phase";
+import createPlayer from "./player";
 
 let one = ""; // player one
 let two = ""; // player two
-let main = ""; // main container (content)
+let main = ""; // main container (content), just in case
 let board = ""; // board container
 let upper = ""; // upper container
 
+
+// Sets up the start button and builds some containers for later use.
 export function setupDOM(content, playerOne, playerTwo) {
     one = playerOne;
     two = playerTwo;
@@ -20,7 +23,9 @@ export function setupDOM(content, playerOne, playerTwo) {
     startButton.textContent = "Start Game";
 
     startButton.addEventListener('click', () => {
-        startButtonEvent(startButton);
+        startButtonEvent();
+        // Remove the start button
+        upper.removeChild(startButton);
     })
     
     const boardContainer = document.createElement('board-container');
@@ -30,16 +35,16 @@ export function setupDOM(content, playerOne, playerTwo) {
     content.appendChild(boardContainer);
 }
 
+// When the swap axis button is clicked, it changes the axis to place the ship.
 function axisSwap(axis) {
     if(axis == 'x')
         return 'y';
     else return 'x';
 }
 
-function startButtonEvent(startButton) {
-    // Remove the start button
-    upper.removeChild(startButton);
-
+// When the start button is clicked. Adds a description of what to do, generates the player board,
+// calls the function to place the ships.
+function startButtonEvent() {
     // Descriptor
     let placeShipsDescription = document.createElement('h1');
     placeShipsDescription.id = 'header-description';
@@ -55,6 +60,8 @@ function startButtonEvent(startButton) {
 
 let axis = 'x'; // default axis for placing ships
 
+// This function determines the length of the ship to be placed. Also removes event listeners once
+// all the ships are placed.
 function handlePlaceShips(event) {
     let ships = one.bFactory.ships;
     let length = 2; // The first ship is the patrol boat.
@@ -120,7 +127,7 @@ function handleMainPhase(event) {
         waitForPlayerPhase(event); // wait for the player turn
 
         // Check if player one wins.
-        if(gameOverCheck(two)) {
+        if(gameOverCheck(two, 'two')) {
             handleGameOver("Player One", one);
         }
         else {
@@ -128,14 +135,15 @@ function handleMainPhase(event) {
             aiMainPhase(one);
 
             // Check if player two wins.
-            if(gameOverCheck(one)) {
+            if(gameOverCheck(one, 'one')) {
                 handleGameOver("Player Two", two);
             }
         }
     }
 }
 
-// Passes the ai player object, the ai tile id, and the ai tile.
+// Passes the AI player object, the AI tile id, and the AI tile. Forces AI to wait until
+// player has made their move.
 async function waitForPlayerPhase(event) {
     await playerMainPhase(two, event.target.id, event.target);
 }
@@ -162,4 +170,27 @@ function handleGameOver(winner, winnerObject) {
     enemyTiles.forEach(tile => {
         tile.removeEventListener('click', handleMainPhase);
       })
+
+    let resetButton = document.createElement('button');
+    resetButton.textContent = "Play again?";
+    upper.appendChild(resetButton);
+
+    resetButton.addEventListener('click', resetEvent);
+}
+
+function resetEvent() {
+    main.innerHTML = ""; // Remove everything in the content container.
+
+    const upperContainer = document.createElement('upper-container'); // Re-create upperContainer
+    upper = upperContainer;
+    const boardContainer = document.createElement('board-container'); // Re-create boardContainer
+    board = boardContainer;
+
+    one = createPlayer(); // Re-create player one and player two.
+    two = createPlayer();
+
+    main.appendChild(upperContainer);
+    main.appendChild(boardContainer);
+
+    startButtonEvent(); // call the start button event
 }

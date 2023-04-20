@@ -5,6 +5,7 @@ export function createGameBoard() {
     generateBoard(board);
     let ships = new Array();
     let occupiedSpaces = new Set();
+    let sunkShips = new Set();
 
     // 10 by 10 array
     function generateBoard(board) {
@@ -22,11 +23,11 @@ export function createGameBoard() {
     function outOfBounds(length, axis, x, y) {
         if(axis === 'x') {
             let outOfBounds = parseInt(x) + length;
-            if(outOfBounds > 9)
+            if(outOfBounds > 10)
                 return null;
         } else if(axis === 'y') {
             let outOfBounds = parseInt(y) + length;
-            if(outOfBounds > 9)
+            if(outOfBounds > 10)
                 return null;
         }
     }
@@ -93,10 +94,16 @@ export function createGameBoard() {
         }
     }
 
+    function addSunkShip(ship) {
+        sunkShips.add(ship);
+    }
+
     return {
         board,
         ships,
         occupiedSpaces,
+        sunkShips,
+        addSunkShip,
         placeShip,
         receiveAttack,
     };

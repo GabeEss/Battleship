@@ -10,14 +10,19 @@ export function playerMainPhase(opponent, id, tile) {
 
         opponent.attacked(x, y); // attack the enemy player
 
-        if(opponent.bFactory.board[x][y] === 'miss')
+        if(opponent.bFactory.board[x][y] === 'miss') {
             tile.classList.add('miss'); // if miss, add class 'miss' for styling
-        else
+        }   
+        else {
             tile.classList.add('hit'); // if hit, add class 'hit' for styling
+        }
+
         resolve();
         });
 }
 
+// Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss
+// via CSS.
 export function aiMainPhase(opponent) {
     let x;
     let y;
@@ -32,14 +37,16 @@ export function aiMainPhase(opponent) {
         if(tile.classList.contains('miss') || tile.classList.contains('hit'));
         else break;
     }
-    
 
     opponent.attacked(x, y);
 
-    if(opponent.bFactory.board[x][y] === 'miss')
+    if(opponent.bFactory.board[x][y] === 'miss') {
         tile.classList.add('miss');
-    else
+    }
+        
+    else {
         tile.classList.add('hit');
+    }
 }
 
 // To help test the game logic without the DOM.
