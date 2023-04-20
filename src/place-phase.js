@@ -71,7 +71,7 @@ export function aiPlacePhase(two) {
 
 // length, axis, x starting coordinate, y starting coordinate
 // adding a class to style the tiles with ships
-function colorShip(l, a, x, y) {
+export function colorShip(l, a, x, y) {
     for(let i = 0; i < l; i++) {
         if(a === 'x') {
             let xIncrement = parseInt(x) + i;

@@ -1,12 +1,12 @@
 import gameOverCheck from "./game-over-check";
 
 // Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss
-// via CSS.
+// via CSS. The AI tile id is different from the player's. It is in the format: e00, e01 ... e98, e99
 export function playerMainPhase(opponent, id, tile) {
     // Wrap the code in a promise, so the aiMainPhase waits for the playerMainPhase.
     return new Promise(resolve => {
-        let x = parseInt(id.charAt(0)); // get coordinates from tile id
-        let y = parseInt(id.charAt(1));
+        let x = parseInt(id.charAt(1)); // get coordinates from tile id
+        let y = parseInt(id.charAt(2));
 
         opponent.attacked(x, y); // attack the enemy player
 

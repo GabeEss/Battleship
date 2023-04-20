@@ -70,7 +70,7 @@ export function displayEnemyBoard(player) {
         for(let j = 0; j < board[i].length; j++) {
             const cell = document.createElement('td');
             cell.classList.add('enemy-cell');
-            let coord = j.toString() + i.toString();
+            let coord = "e" + j.toString() + i.toString();
             cell.setAttribute('id', coord);
             row.appendChild(cell);
         }

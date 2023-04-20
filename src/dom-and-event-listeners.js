@@ -81,9 +81,9 @@ function handlePlaceShips(event) {
       })
       mainPhaseEvent();
     }
-  }
+}
   
-  function placeShipsEvent() {
+function placeShipsEvent() {
     // Click to change the axis the player wishes to place his ships.
     let axisButton = document.createElement('button');
     axisButton.id = 'axis-button';
@@ -96,9 +96,7 @@ function handlePlaceShips(event) {
     playerTiles.forEach(tile => {
       tile.addEventListener('click', handlePlaceShips);
     })
-  }
-
-let turn = 0; // determine the turn number
+}
 
 function mainPhaseEvent() {
     let axisButton = document.getElementById('axis-button');
@@ -116,25 +114,52 @@ function mainPhaseEvent() {
 }
 
 function handleMainPhase(event) {
-    if(turn % 2 == 0) {
-        // Don't increment the turn if the player is hitting the same square.
-        if(event.target.classList.contains('hit') || event.target.classList.contains('miss'));
-        else {
-            waitForPlayerPhase(event);
-            // AI turn occurs immediately after player turn.
-            aiMainPhase(one);
-            turn++;
-            if(gameOverCheck(one)) {
-                console.log("Player two wins.");
+    // Don't increment the turn if the player is hitting the same square.
+    if(event.target.classList.contains('hit') || event.target.classList.contains('miss'));
+    else {
+        waitForPlayerPhase(event); // wait for the player turn
+
+        // Check if player one wins.
+        if(gameOverCheck(two)) {
+            handleGameOver("Player One", one);
         }
+        else {
+            // AI turn occurs after the player turn.
+            aiMainPhase(one);
+
+            // Check if player two wins.
+            if(gameOverCheck(one)) {
+                handleGameOver("Player Two", two);
+            }
         }
     }
 }
 
+// Passes the ai player object, the ai tile id, and the ai tile.
 async function waitForPlayerPhase(event) {
     await playerMainPhase(two, event.target.id, event.target);
-    turn++;
-    if(gameOverCheck(two)) {
-        console.log("Player one wins.");
-    }
+}
+
+function handleGameOver(winner, winnerObject) {
+    let header = document.getElementById('header-description');
+    header.textContent = 'The winner is ' + winner + '!';
+
+    const occupiedSpaces = winnerObject.bFactory.occupiedSpaces;
+    // Go through all the coordinates with a ship.
+    occupiedSpaces.forEach((item) => {
+        let tile = "";
+        if(winner == "Player Two")
+            tile = document.getElementById(`e${item}`);
+        else
+            tile = document.getElementById(`${item}`);
+        // Change the color of the tile to show the loser the location of the enemy ships.
+        if(!tile.classList.contains('hit') || !tile.classList.contains('miss') || !tile.classList.contains('player-ship'))
+            tile.classList.add('player-ship');
+    })
+
+    // Remove event listeners for each tile.
+    const enemyTiles = document.querySelectorAll('.enemy-cell');
+    enemyTiles.forEach(tile => {
+        tile.removeEventListener('click', handleMainPhase);
+      })
 }
