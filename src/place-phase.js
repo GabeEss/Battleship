@@ -41,7 +41,7 @@ export function aiPlacePhase(two) {
       const axis = Math.random() < 0.5 ? 'x' : 'y';
   
 
-      // This loop is a backup test to make sure a ship is being placed on the board.
+      // This loop ensures a ship is being placed on the board.
       // If the place function is fed coordinates of an occupied space, a ship will not be placed.
       // This loop will repeat until the number of ships placed has increased.
       while (true) {

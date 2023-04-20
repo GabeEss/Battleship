@@ -1,7 +1,45 @@
 import gameOverCheck from "./game-over-check";
 
-export function mainPhase() {
+// Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss
+// via CSS.
+export function playerMainPhase(opponent, id, tile) {
+    // Wrap the code in a promise, so the aiMainPhase waits for the playerMainPhase.
+    return new Promise(resolve => {
+        let x = parseInt(id.charAt(0)); // get coordinates from tile id
+        let y = parseInt(id.charAt(1));
 
+        opponent.attacked(x, y); // attack the enemy player
+
+        if(opponent.bFactory.board[x][y] === 'miss')
+            tile.classList.add('miss'); // if miss, add class 'miss' for styling
+        else
+            tile.classList.add('hit'); // if hit, add class 'hit' for styling
+        resolve();
+        });
+}
+
+export function aiMainPhase(opponent) {
+    let x;
+    let y;
+    let tile;
+
+    while(true) {
+        x = Math.floor(Math.random() * 10); // get random x y coordinates
+        y = Math.floor(Math.random() * 10);
+        tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+
+        // The AI will continue to find coordinates until it finds a space it has not targeted.
+        if(tile.classList.contains('miss') || tile.classList.contains('hit'));
+        else break;
+    }
+    
+
+    opponent.attacked(x, y);
+
+    if(opponent.bFactory.board[x][y] === 'miss')
+        tile.classList.add('miss');
+    else
+        tile.classList.add('hit');
 }
 
 // To help test the game logic without the DOM.
