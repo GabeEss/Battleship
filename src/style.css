@@ -4,6 +4,12 @@
     background-color: blue;
 }
 
+.enemy-cell {
+    height: 50px;
+    width: 50px;
+    background-color: red;
+}
+
 .number-cell {
     height: 50px;
     width: 50px;
@@ -25,4 +31,12 @@ board-container {
 
 .player-ship {
     background-color: gold;
+}
+
+.miss {
+    background-color: white;
+}
+
+.hit {
+    background-color: black;
 }

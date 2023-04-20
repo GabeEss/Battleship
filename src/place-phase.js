@@ -29,6 +29,46 @@ export function defaultPlacePhase2(two) {
     two.place(5, 'x', 4, 4);
 }
 
+export function aiPlacePhase(two) {
+  
+    // Array of ship lengths to randomly choose from
+    const shipLengths = [2, 3, 3, 4, 5];
+  
+    // Loop through the ship lengths and place each ship
+    for (let i = 0; i < shipLengths.length; i++) {
+      let shipNumber = two.bFactory.ships.length; // Get the number of ships in the player object
+      const length = shipLengths[i];
+      const axis = Math.random() < 0.5 ? 'x' : 'y';
+  
+
+      // This loop is a backup test to make sure a ship is being placed on the board.
+      // If the place function is fed coordinates of an occupied space, a ship will not be placed.
+      // This loop will repeat until the number of ships placed has increased.
+      while (true) {
+        let x, y;
+
+        // Depending on the axis, the placement of the ship's starting coordinate will vary
+        // by the length of the ship being placed.
+        if(axis == 'x') {
+            x = Math.floor(Math.random() * (10 - length));
+            y = Math.floor(Math.random() * 10);
+        }
+        else {
+            x = Math.floor(Math.random() * 10);
+            y = Math.floor(Math.random() * (10 - length));
+        }
+  
+        two.place(length, axis, x, y);
+  
+        let newShipNumber = two.bFactory.ships.length; // Get the new number of ships
+  
+        if (newShipNumber > shipNumber) {
+            break; // Exit the loop if the new number of ships is greater than the old number
+        }
+      }
+    }
+  }
+
 // length, axis, x starting coordinate, y starting coordinate
 // adding a class to style the tiles with ships
 function colorShip(l, a, x, y) {

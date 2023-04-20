@@ -1,6 +1,6 @@
-import displayBoard from "./display-board";
+import { displayBoard } from "./display-board";
 import { mainPhase } from "./main-phase";
-import { placePhase } from "./place-phase";
+import { aiPlacePhase, placePhase } from "./place-phase";
 
 let one = ""; // player one
 let two = ""; // player two
@@ -51,35 +51,52 @@ function startButtonEvent(startButton) {
     placeShipsEvent();
 }
 
-function placeShipsEvent() {
-    let axis = 'x'; // default axis for placing ships
-    let length = 2; // The first ship to place is the patrol ship.
+let axis = 'x'; // default axis for placing ships
 
+function handlePlaceShips(event) {
+    let ships = one.bFactory.ships;
+    let length = 2; // The first ship is the patrol boat.
+
+    if(ships.length == 0)
+      length = 2; // place the patrol boat
+    else if(ships.length == 1) 
+      length = 3; // place the submarine
+    else if(ships.length == 2)
+      length = 3; // place the destroyer
+    else if(ships.length == 3)
+      length = 4; // place the battleship
+    else if(ships.length == 4)
+      length = 5; // place the carrier
+  
+    if(ships.length < 5)
+      placePhase(one, event.target.id, axis, length);
+  
+    if(ships.length == 5) {
+        console.log(main);
+      aiPlacePhase(two); // AI places ships randomly
+      const playerTiles = document.querySelectorAll('.cell');
+      playerTiles.forEach(tile => {
+        tile.removeEventListener("click", handlePlaceShips);
+      })
+      mainPhaseEvent();
+    }
+  }
+  
+  function placeShipsEvent() {
     // Click to change the axis the player wishes to place his ships.
     let axisButton = document.createElement('button');
     axisButton.textContent = "Swap Axis";
     axisButton.addEventListener('click', () => axis = axisSwap(axis));
     upper.appendChild(axisButton);
-
+  
     // Get all the tiles and create a click event.
     const playerTiles = document.querySelectorAll('.cell');
     playerTiles.forEach(tile => {
-        tile.addEventListener('click', (event) => {
-            let ships = one.bFactory.ships;
-            if(ships.length == 0)
-                length = 2; // place the patrol boat
-            else if(ships.length == 1) 
-                length = 3; // place the submarine
-            else if(ships.length == 2)
-                length = 3; // place the destroyer
-            else if(ships.length == 3)
-                length = 4; // place the battleship
-            else if(ships.length == 4)
-                length = 5; // place the carrier
-            else;
-                mainPhase(); // remember to remove all the event listeners for the tiles before adding ones
-
-            placePhase(one, event.target.id, axis, length);
-        })
+      tile.addEventListener('click', handlePlaceShips);
     })
+  }
+
+function mainPhaseEvent() {
+    const playerTiles = document.querySelectorAll('.enemy-cell');
+    
 }
