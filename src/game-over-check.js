@@ -17,6 +17,10 @@ export default function gameOverCheck(player, identifier) {
     return false;
 }
 
+
+// Takes the player and the identifier to determine if the player is player one or two.
+// Finds the set of sunk ships with in the player object and adds the sunk class to the tiles
+// at the coordinates of each sunk ship.
 function sunkModifier(player, identifier) {
     const sunkShips = player.bFactory.sunkShips;
     sunkShips.forEach((item) => {

@@ -24,28 +24,96 @@ export function playerMainPhase(opponent, id, tile) {
 // Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss
 // via CSS.
 export function aiMainPhase(opponent) {
-    let x;
-    let y;
-    let tile;
+    let x; // the x value to attack
+    let y; // the y value to attack
+    let tile; // the target tile
+    let found = false; // The boolean to indicate if an adjacent tile has been found.
 
-    while(true) {
-        x = Math.floor(Math.random() * 10); // get random x y coordinates
-        y = Math.floor(Math.random() * 10);
-        tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+    // Get all tiles with the 'hit' class to indicate the ship has been hit.
+    let hits = document.querySelectorAll('.hit');
 
-        // The AI will continue to find coordinates until it finds a space it has not targeted.
-        if(tile.classList.contains('miss') || tile.classList.contains('hit'));
-        else break;
+    // Go through each hit and attempt to find an available target.
+    for(let i = 0; i < hits.length; i++) {
+        let hit = hits[i];
+        if(hit.classList.contains('sunk') || hit.classList.contains('enemy-cell')) {
+          // Do nothing and move to the next hit if sunk or an ai ship.
+        } else {
+          const hitId = hit.id;
+          let availableTargetId = aiFindsAdjacentTile(hitId); // find an available target
+          if(availableTargetId) {
+            x = availableTargetId.charAt(0);
+            y = availableTargetId.charAt(1);
+            tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+            found = true;
+            break; // break out of the loop
+          }
+        }
+      }
+
+    // If an adjacent tile was found, attack the target. Otherwise the AI finds a random tile.
+    if(found)
+        opponent.attacked(x, y); // the enemy player object calls its attacked function
+    else {
+        tile = aiFindsRandom();
+        x = parseInt(tile.id.charAt(0));
+        y = parseInt(tile.id.charAt(1));
+        opponent.attacked(x, y);
     }
-
-    opponent.attacked(x, y);
-
+      
     if(opponent.bFactory.board[x][y] === 'miss') {
         tile.classList.add('miss');
     }
         
     else {
         tile.classList.add('hit');
+    }
+}
+
+// The logic for the AI to find a tile where the space has not been taken or out of bounds.
+// Returns the id of the first found target.
+function aiFindsAdjacentTile(id) {
+    let x = parseInt(id.charAt(0)); // the previous x value where a hit has been found
+    let y = parseInt(id.charAt(1)); // the previous y value where a hit has been found
+    let array = [x + 1, x - 1, y + 1, y - 1]; // the adjacent tile values
+    let found = false; // if the next target has been found
+    let targetId = null; // the new target id to return
+
+    for(let i = 0; i < array.length; i++) {
+        if(found) break;
+        // Discriminate against out of bounds.
+        if(array[i] < 0 || array[i] > 9);
+        // Search the adjacent tiles on the xaxis. Else the adjacent tiles on the yaxis.
+        else {
+            if(i < 2) {
+                let tile = document.getElementById(`${array[i]}${y}`); // find the corresponding tile
+                if(tile.classList.contains('miss') || tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            } else {
+                let tile = document.getElementById(`${x}${array[i]}`); // find the corresponding tile
+                if(tile.classList.contains('miss') || tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            }
+        }
+    }
+    return targetId;
+}
+
+// AI selects a random square in the grid.
+function aiFindsRandom() {
+    while(true) {
+        let x = Math.floor(Math.random() * 10); // get random x y coordinates
+        let y = Math.floor(Math.random() * 10);
+        let tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+
+        // The AI will continue to find coordinates until it finds a space it has not targeted.
+        if(tile.classList.contains('miss') || tile.classList.contains('hit'));
+        else return tile;
     }
 }
 

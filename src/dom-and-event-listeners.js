@@ -60,7 +60,8 @@ function startButtonEvent() {
 
 let axis = 'x'; // default axis for placing ships
 
-// This function determines the length of the ship to be placed. Also removes event listeners once
+// This function determines the length of the ship to be placed and calls placePhase until
+// all the ships have been placed. Also removes event listeners once
 // all the ships are placed.
 function handlePlaceShips(event) {
     let ships = one.bFactory.ships;
@@ -90,6 +91,9 @@ function handlePlaceShips(event) {
     }
 }
   
+
+// This function adds the event to each tile to place ships and creates a button (and event) to
+// change the axis the ship is placed.
 function placeShipsEvent() {
     // Click to change the axis the player wishes to place his ships.
     let axisButton = document.createElement('button');
@@ -105,6 +109,9 @@ function placeShipsEvent() {
     })
 }
 
+// This function removes the axis button from the positioning phase, changes the header text, 
+// creates a new board to display the opponent's tiles, and
+// adds event listeners to the opponent's board so that the player can make attacks.
 function mainPhaseEvent() {
     let axisButton = document.getElementById('axis-button');
     upper.removeChild(axisButton);
@@ -120,6 +127,8 @@ function mainPhaseEvent() {
       })
 }
 
+// This function handles the transition from the player's move to the ai's move. It also checks
+// when the game ends and calls the handler for that phase.
 function handleMainPhase(event) {
     // Don't increment the turn if the player is hitting the same square.
     if(event.target.classList.contains('hit') || event.target.classList.contains('miss'));
@@ -148,6 +157,8 @@ async function waitForPlayerPhase(event) {
     await playerMainPhase(two, event.target.id, event.target);
 }
 
+// This function displays the winner in the header, displays the unrevealed ai ships, removes
+// the event listeners and displays the reset button.
 function handleGameOver(winner, winnerObject) {
     let header = document.getElementById('header-description');
     header.textContent = 'The winner is ' + winner + '!';
@@ -178,6 +189,8 @@ function handleGameOver(winner, winnerObject) {
     resetButton.addEventListener('click', resetEvent);
 }
 
+// This function removes everything in the main container, re-adds the upper container
+// and the board container, re-creates the players and initializes them, and calls the startButtonEvent.
 function resetEvent() {
     main.innerHTML = ""; // Remove everything in the content container.
 
