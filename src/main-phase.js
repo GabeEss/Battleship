@@ -106,15 +106,73 @@ function aiFindsAdjacentTile(id) {
 
 // AI selects a random square in the grid.
 function aiFindsRandom() {
+    let count = 0;
+
     while(true) {
         let x = Math.floor(Math.random() * 10); // get random x y coordinates
         let y = Math.floor(Math.random() * 10);
         let tile = document.getElementById(`${x}${y}`); // find the corresponding tile
 
-        // The AI will continue to find coordinates until it finds a space it has not targeted.
-        if(tile.classList.contains('miss') || tile.classList.contains('hit'));
-        else return tile;
+        if(!tile.classList.contains('miss') && !tile.classList.contains('hit')) {
+            // For 10 attempts, the AI will attempt to find a tile that has two empty
+            // adjacent tiles beside the random one selected. If it is unable to find one within
+            // 10 attempts, it will just pass through this check.
+            if(aiRandomPriority(tile) || count >= 10) {
+                // console.log(`Attempt: ${count}`);
+                return tile;
+            } else {
+            count++;
+            }
+        }
     }
+}
+
+// AI prioritizes squares that have two empty tiles adjacent to them.
+function aiRandomPriority(tile) {
+    let id = tile.id;
+    let x = parseInt(id.charAt(0)); // x value of the tile to check
+    let y = parseInt(id.charAt(1)); // y value of the tile to check
+    let array = [x + 1, x - 1, y + 1, y - 1]; // the adjacent tile values
+    let found = false; // if the next target has been found
+    let count = 0; // The count to find two empty adjacent tiles.
+    let target = null; // the new target id to return
+
+    for(let i = 0; i < array.length; i++) {
+        if(found) break;
+        // Discriminate against out of bounds.
+        if(array[i] < 0 || array[i] > 9);
+        // Search the adjacent tiles on the xaxis. Else the adjacent tiles on the yaxis.
+        else {
+            if(i < 2) {
+                let newTile = document.getElementById(`${array[i]}${y}`); // find the corresponding tile
+                // If the tile has an open space, iterate the counter.
+                if(newTile.classList.contains('miss') || newTile.classList.contains('hit'));
+                else count++;
+                // When the counter is 2, the tile has been found.
+                if(count == 2) {
+                    found = true;
+                }
+            } else {
+                if(i == 2) count = 0; // reset the counter
+                
+                let newTile = document.getElementById(`${x}${array[i]}`);
+                if(newTile.classList.contains('miss') || newTile.classList.contains('hit'));
+                else count++;
+
+                if(count == 2) {
+                    found = true;
+                }
+            }
+        }
+    }
+
+    // If the target was found, target will no longer be null.
+    if(found) {
+        target = tile;
+        return target;
+    } else
+        return target;
+    
 }
 
 // To help test the game logic without the DOM.
