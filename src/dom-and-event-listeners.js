@@ -1,7 +1,7 @@
 import { displayBoard, displayEnemyBoard } from "./display-board";
 import gameOverCheck from "./game-over-check";
 import { playerMainPhase, aiMainPhase } from "./main-phase";
-import { aiPlacePhase, placePhase } from "./place-phase";
+import { aiPlacePhase, colorOnHover, placePhase, removeHoverable } from "./place-phase";
 import createPlayer from "./player";
 
 let one = ""; // player one
@@ -58,28 +58,29 @@ function startButtonEvent() {
     placeShipsEvent();
 }
 
-let axis = 'x'; // default axis for placing ships
+let axis = 'x'; // Default axis for placing ships.
+let length = 2; // The first ship to place is the patrol boat.
 
 // This function determines the length of the ship to be placed and calls placePhase until
 // all the ships have been placed. Also removes event listeners once
 // all the ships are placed.
 function handlePlaceShips(event) {
     let ships = one.bFactory.ships;
-    let length = 2; // The first ship is the patrol boat.
 
-    if(ships.length == 0)
-      length = 2; // place the patrol boat
-    else if(ships.length == 1) 
-      length = 3; // place the submarine
-    else if(ships.length == 2)
-      length = 3; // place the destroyer
-    else if(ships.length == 3)
-      length = 4; // place the battleship
-    else if(ships.length == 4)
-      length = 5; // place the carrier
+    
   
-    if(ships.length < 5)
+    if(ships.length < 5) {
       placePhase(one, event.target.id, axis, length);
+      
+      if(ships.length == 1) 
+        length = 3; // update to the submarine
+      else if(ships.length == 2)
+        length = 3; // update to the destroyer
+      else if(ships.length == 3)
+        length = 4; // update to the battleship
+      else if(ships.length == 4)
+        length = 5; // update to the carrier
+    }
   
     if(ships.length == 5) {
       aiPlacePhase(two); // AI places ships randomly
@@ -87,8 +88,18 @@ function handlePlaceShips(event) {
       playerTiles.forEach(tile => {
         tile.removeEventListener("click", handlePlaceShips);
       })
+      playerTiles.forEach(tile => {
+        tile.removeEventListener("mouseenter", hoverHandler);
+      })
+      playerTiles.forEach(tile => {
+        tile.removeEventListener('mouseleave', removeHoverable)
+      })
       mainPhaseEvent();
     }
+}
+
+function hoverHandler(event) {
+  colorOnHover(length, axis, event.target.id);
 }
   
 
@@ -106,6 +117,14 @@ function placeShipsEvent() {
     const playerTiles = document.querySelectorAll('.cell');
     playerTiles.forEach(tile => {
       tile.addEventListener('click', handlePlaceShips);
+    })
+
+    playerTiles.forEach(tile => {
+      tile.addEventListener('mouseenter', hoverHandler);
+    })
+
+    playerTiles.forEach(tile => {
+      tile.addEventListener('mouseleave', removeHoverable);
     })
 }
 
@@ -201,6 +220,9 @@ function resetEvent() {
 
     one = createPlayer(); // Re-create player one and player two.
     two = createPlayer();
+
+    length = 2; // reset globals
+    axis = 'x'; // reset globals
 
     main.appendChild(upperContainer);
     main.appendChild(boardContainer);

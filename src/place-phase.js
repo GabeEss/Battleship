@@ -84,3 +84,34 @@ export function colorShip(l, a, x, y) {
         }
     }
 }
+
+export function colorOnHover(l, a, id) {
+    let x = id.charAt(0); // get x from the tile id
+    let y = id.charAt(1); // get y from the tile id
+
+    for(let i = 0; i < l; i++) {
+        if(a === 'x') {
+            let outOfBounds = parseInt(x) + parseInt(l);
+            if(outOfBounds <= 10) {
+                let xIncrement = parseInt(x) + i;
+                let colorCell = document.getElementById(`${xIncrement}${y}`);
+                colorCell.classList.add("hoverable");
+            }
+        } else if(a === 'y') {
+            let outOfBounds = parseInt(y) + parseInt(l);
+            if(outOfBounds <= 10) {
+                let yIncrement = parseInt(y) + i;
+                let colorCell = document.getElementById(`${x}${yIncrement}`);
+                colorCell.classList.add('hoverable');
+            }
+        }
+    }
+}
+
+export function removeHoverable() {
+    let hoverableCells = document.querySelectorAll(".hoverable");
+
+    hoverableCells.forEach(element => {
+        element.classList.remove('hoverable');
+    })
+}
