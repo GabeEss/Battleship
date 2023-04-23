@@ -21,8 +21,7 @@ export function playerMainPhase(opponent, id, tile) {
         });
 }
 
-// Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss
-// via CSS.
+// Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss.
 export function aiMainPhase(opponent) {
     let x; // the x value to attack
     let y; // the y value to attack
@@ -36,19 +35,42 @@ export function aiMainPhase(opponent) {
     for(let i = 0; i < hits.length; i++) {
         let hit = hits[i];
         if(hit.classList.contains('sunk') || hit.classList.contains('enemy-cell')) {
-          // Do nothing and move to the next hit if sunk or an ai ship.
+          // Do nothing and move to the next hit, if the class is a sunken ship or an ai ship.
         } else {
           const hitId = hit.id;
-          let availableTargetId = aiFindsAdjacentTile(hitId); // find an available target
-          if(availableTargetId) {
-            x = availableTargetId.charAt(0);
-            y = availableTargetId.charAt(1);
-            tile = document.getElementById(`${x}${y}`); // find the corresponding tile
-            found = true;
-            break; // break out of the loop
+          let axisAdjacent = aiConfirmAdjacent(hitId); // confirms an adjacent hit and the axis
+          if(axisAdjacent) {
+            if(axisAdjacent == 'x') {
+                let availableTargetId = aiPathing(hitId, axisAdjacent);
+                if(availableTargetId) {
+                    x = availableTargetId.charAt(0);
+                    y = availableTargetId.charAt(1);
+                    tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+                    found = true;
+                    break; // break out of the loop
+                }
+            } else if(axisAdjacent == 'y') {
+                let availableTargetId = aiPathing(hitId, axisAdjacent);
+                if(availableTargetId) {
+                    x = availableTargetId.charAt(0);
+                    y = availableTargetId.charAt(1);
+                    tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+                    found = true;
+                    break; // break out of the loop
+                }
+            }
+          } else {
+            let availableTargetId = aiFindsAdjacentTile(hitId); // find an available target
+            if(availableTargetId) {
+                x = availableTargetId.charAt(0);
+                y = availableTargetId.charAt(1);
+                tile = document.getElementById(`${x}${y}`); // find the corresponding tile
+                found = true;
+                break; // break out of the loop
+            }
           }
         }
-      }
+    }
 
     // If an adjacent tile was found, attack the target. Otherwise the AI finds a random tile.
     if(found)
@@ -67,6 +89,126 @@ export function aiMainPhase(opponent) {
     else {
         tile.classList.add('hit');
     }
+}
+
+// The function that confirms two adjacent hits for the AI.
+function aiConfirmAdjacent(id) {
+    let x = parseInt(id.charAt(0)); // the previous x value where a hit has been found
+    let y = parseInt(id.charAt(1)); // the previous y value where a hit has been found
+    let array = [x + 1, x - 1, y + 1, y - 1]; // the adjacent tile values
+    let found = false; // if the next target has been found
+    let axis = "";
+
+    for(let i = 0; i < array.length; i++) {
+        if(found) break;
+        // Discriminate against out of bounds.
+        if(array[i] < 0 || array[i] > 9);
+        // Search the adjacent tiles on the xaxis. Else the adjacent tiles on the yaxis.
+        else {
+            if(i < 2) {
+                let tile = document.getElementById(`${array[i]}${y}`); // find the corresponding tile
+                if(tile.classList.contains('miss') || tile.classList.contains('sunk'));
+                else if(tile.classList.contains('hit')) {
+                    found = true;
+                    axis = 'x';
+                }
+            } else {
+                let tile = document.getElementById(`${x}${array[i]}`); // find the corresponding tile
+                if(tile.classList.contains('miss') || tile.classList.contains('sunk'));
+                else if(tile.classList.contains('hit')) {
+                    found = true;
+                    axis = 'y';
+                }
+            }
+        }
+    }
+    return axis;
+}
+
+// Once two adjacent hits are confirmed, the ai will target adjacent tiles on the axis.
+function aiPathing(id, axis) {
+    let x = parseInt(id.charAt(0)); // the previous x value where a hit has been found
+    let y = parseInt(id.charAt(1)); // the previous y value where a hit has been found
+    let found = false; // if the next target has been found
+    let targetId = null; // the new target id to return
+    
+    if(axis == 'x') {
+        let array = [x + 1, x + 2, x + 3, x + 4, x + 5, 
+        x - 1, x - 2, x - 3, x - 4, x - 5]; // the potential adjacent axis values
+
+        for(let i = 0; i < array.length/2; i++) {
+            if(found) break;
+            // Discriminate against out of bounds.
+            if(array[i] < 0 || array[i] > 9);
+            else {
+                let tile = document.getElementById(`${array[i]}${y}`); // find the corresponding tile
+                if(tile.classList.contains('miss')) {
+                    break; // a miss marks the end of one side of the axis
+                }
+                else if(tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            }
+        }
+        for(let i = array.length/2; i < array.length; i++) {
+            if(found) break;
+            // Discriminate against out of bounds.
+            if(array[i] < 0 || array[i] > 9);
+            else {
+                let tile = document.getElementById(`${array[i]}${y}`); // find the corresponding tile
+                if(tile.classList.contains('miss')) {
+                    break; // a miss marks the end of one side of the axis
+                }
+                else if(tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            }
+        }
+    } else {
+        let array = [y + 1, y + 2, y + 3, y + 4, y + 5,
+        y - 1, y - 2, y - 3, y - 4, y - 5];
+
+        for(let i = 0; i < array.length/2; i++) {
+            if(found) break;
+            // Discriminate against out of bounds.
+            if(array[i] < 0 || array[i] > 9);
+            // Search the adjacent tiles on the xaxis. Else the adjacent tiles on the yaxis.
+            else {
+                let tile = document.getElementById(`${x}${array[i]}`); // find the corresponding tile
+                if(tile.classList.contains('miss')) {
+                    break; // a miss marks the end of one side of the axis
+                }
+                else if (tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            }
+        }
+        for(let i = array.length/2; i < array.length; i++) {
+            if(found) break;
+            // Discriminate against out of bounds.
+            if(array[i] < 0 || array[i] > 9);
+            // Search the adjacent tiles on the xaxis. Else the adjacent tiles on the yaxis.
+            else {
+                let tile = document.getElementById(`${x}${array[i]}`); // find the corresponding tile
+                if(tile.classList.contains('miss')) {
+                    break; // a miss marks the end of one side of the axis
+                }
+                else if (tile.classList.contains('hit'));
+                else {
+                    found = true;
+                    targetId = tile.id;
+                }
+            }
+        }
+    }
+
+    return targetId;
 }
 
 // The logic for the AI to find a tile where the space has not been taken or out of bounds.
