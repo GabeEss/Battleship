@@ -161,7 +161,7 @@ async function waitForPlayerPhase(event) {
 // the event listeners and displays the reset button.
 function handleGameOver(winner, winnerObject) {
     let header = document.getElementById('header-description');
-    header.textContent = 'The winner is ' + winner + '!';
+    header.textContent = 'Winner: ' + winner + '!';
 
     const occupiedSpaces = winnerObject.bFactory.occupiedSpaces;
     // Go through all the coordinates with a ship.

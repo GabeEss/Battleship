@@ -1,6 +1,6 @@
 import createPlayer from "./player";
-import { placePhase, defaultPlacePhase, defaultPlacePhase2 } from "./place-phase";
-import { mainPhase, defaultMainPhase } from "./main-phase";
+// import { placePhase, defaultPlacePhase, defaultPlacePhase2 } from "./place-phase";
+// import { mainPhase, defaultMainPhase } from "./main-phase";
 import { setupDOM } from "./dom-and-event-listeners";
 
 // This function creates two player objects and passes them into the setupDOM function.

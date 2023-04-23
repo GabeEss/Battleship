@@ -21,14 +21,14 @@ export function playerMainPhase(opponent, id, tile) {
         });
 }
 
-// Function attacks the opponent's tile. A class is added to the tile to indicate a hit or miss.
+// Function attacks the opponent's ship and tile. A class is added to the tile to indicate a hit or miss.
 export function aiMainPhase(opponent) {
     let x; // the x value to attack
     let y; // the y value to attack
     let tile; // the target tile
     let found = false; // The boolean to indicate if an adjacent tile has been found.
 
-    // Get all tiles with the 'hit' class to indicate the ship has been hit.
+    // Get all tiles with the 'hit' class for follow-through logic.
     let hits = document.querySelectorAll('.hit');
 
     // Go through each hit and attempt to find an available target.
