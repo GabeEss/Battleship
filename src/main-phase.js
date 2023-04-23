@@ -39,6 +39,10 @@ export function aiMainPhase(opponent) {
         } else {
           const hitId = hit.id;
           let axisAdjacent = aiConfirmAdjacent(hitId); // confirms an adjacent hit and the axis
+          
+          // aiConfirmAdjacent will return the axis even if both sides have a miss, but if aiPathing
+          // cannot find an appropriate target, it will not break the loop. Thus, you can use the
+          // aiFindsAdjacentTile to clean up ships that are placed side by side.
           if(axisAdjacent) {
             if(axisAdjacent == 'x') {
                 let availableTargetId = aiPathing(hitId, axisAdjacent);
@@ -59,7 +63,8 @@ export function aiMainPhase(opponent) {
                     break; // break out of the loop
                 }
             }
-          } else {
+          }
+
             let availableTargetId = aiFindsAdjacentTile(hitId); // find an available target
             if(availableTargetId) {
                 x = availableTargetId.charAt(0);
@@ -68,7 +73,6 @@ export function aiMainPhase(opponent) {
                 found = true;
                 break; // break out of the loop
             }
-          }
         }
     }
 
